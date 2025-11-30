@@ -1,0 +1,26 @@
+#use <conio>
+#use <util>
+
+typedef struct dll_node dll;
+struct dll_node {
+	dll* prev;
+	char data;
+	dll* next;
+};
+
+// start and end are null (dummy pointer)
+// add a cursor which is the position where edits can be made
+// edits happen to the left of the cursor
+// cursor can be point to same node that end points to
+// (edit at the end of the text buffer)
+
+typedef struct tbuf_header tbuf;
+struct tbuf_header {
+	dll* start;
+	dll* cursor;
+	dll* end;
+};
+
+bool is_tbuf(tbuf* B) {
+	// TODO 
+}
