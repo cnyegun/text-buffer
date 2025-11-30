@@ -8,7 +8,7 @@ struct dll_node {
 	dll* next;
 };
 
-// start and end are null (dummy pointer)
+// start and end are dummy pointers
 // add a cursor which is the position where edits can be made
 // edits happen to the left of the cursor
 // cursor can be point to same node that end points to
@@ -21,6 +21,59 @@ struct tbuf_header {
 	dll* end;
 };
 
-bool is_tbuf(tbuf* B) {
-	// TODO 
+bool has_cycle(dll* head) {
+	dll* slow = head;
+	dll* fast = head;
+
+	while (fast != NULL && fast->next != NULL) {
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast) {
+			return true;
+		}
+	}
+
+	return false;
 }
+
+bool cursor_outside(tbuf* B) 
+//@requires B != NULL;
+//@requires !has_cycle(B->start);
+{
+	for (dll* i = B->start; i != B->end; i = i->next) {
+		if (B->cursor == i) return false;
+	}
+
+	return true;
+}
+
+bool reachable(dll* start, dll* end) 
+//@requires start != NULL && end != NULL;
+//@requires !has_cycle(start);
+{
+	for (dll* p = start; p != NULL; p = p->next) {
+		if (p == end) return true;
+	}
+	return false;
+}
+
+bool is_dll(dll* start, dll* end) 
+//@requires start != NULL && end != NULL;
+//@requires !has_cycle(start);
+//@requires reachable(start, end);
+{
+	return true;
+}
+
+bool is_tbuf(tbuf* B) {
+	if (B == NULL) return false;
+
+	if (has_cycle(B->start)) return false;
+
+	if (!reachable(B->start, B->end)) return false;
+
+	if (cursor_outside(B)) return false;
+
+	return true;
+}
+

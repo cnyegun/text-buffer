@@ -1,0 +1,115 @@
+#use <conio>
+
+void test_case_circular() {
+	dll* head = alloc(dll);
+	dll* body_1 = alloc(dll);
+	dll* body_2 = alloc(dll);
+	dll* tail = alloc(dll);
+
+	head->prev = tail;
+	head->next = body_1;
+
+	body_1->prev = head;
+	body_1->next = body_2;
+	body_1->data = 'a';
+
+	body_2->prev = body_1;
+	body_2->next = tail;
+	body_2->data = 'b';
+
+	tail->prev = body_2;
+	tail->next = head;
+
+	tbuf* tb = alloc(tbuf);
+	tb->start = head;
+	tb->end = tail;
+	tb->cursor = body_1;
+	
+	//@assert !is_tbuf(tb);
+	return;
+}
+
+void test_case_outside() {
+	// cursor isn't on the path from start to end
+	dll* head = alloc(dll);
+	dll* a_part = alloc(dll);
+	dll* b_part = alloc(dll);
+	dll* tail = alloc(dll);
+	dll* b_out = alloc(dll);
+
+	a_part->data = 'a';
+	b_part->data = 'b';
+	b_out->data = 'b';
+
+	head->next = a_part;
+
+	a_part->prev = head;
+	a_part->next = b_part;
+
+	b_part->prev = a_part;
+	b_part->next = tail;
+		
+	tail->prev = b_part;
+
+	b_out->prev = head;
+	b_out->next = tail;
+
+	tbuf* tb = alloc(tbuf);
+	tb->start = head;
+	tb->end = tail;
+	tb->cursor = b_out;
+	
+	//@assert !is_tbuf(tb);
+	return;
+}
+
+void test_case_doubly() {
+	dll* head = alloc(dll);
+	dll* a_part = alloc(dll);
+	dll* b_part = alloc(dll);
+	dll* b_out = alloc(dll);
+	dll* tail = alloc(dll);
+
+	a_part->data = 'a';
+	b_part->data = 'b';
+	b_out->data = 'b';
+
+	head->next = a_part;
+
+	a_part->prev = head;
+	a_part->next = b_out;
+
+	b_out->prev = a_part;
+	b_out->next = tail;	
+
+	tail->prev = b_part;
+	
+	b_part->prev = a_part;
+	b_part->next = tail;
+
+	tbuf* tb = alloc(tbuf);
+	tb->start = head;
+	tb->end = tail;
+	tb->cursor = a_part;
+	//@assert !is_tbuf(tb);
+	return;
+}
+
+int main() {
+	print("+-----------------------------------+--------+\n");
+
+	print("| Running test_case_circular()...   | ");
+	test_case_circular();
+	print(" PASS  |\n");
+
+	print("| Running test_case_outside()...    | ");
+	test_case_outside();
+	print(" PASS  |\n");
+
+	print("| Running test_case_doubly()...     | ");
+	test_case_doubly();
+	print(" PASS  |\n");
+	print("+-----------------------------------+--------+\n");
+	print("All tests passed!\n");
+	return 0;
+}
