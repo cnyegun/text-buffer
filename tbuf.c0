@@ -40,8 +40,9 @@ bool cursor_outside(tbuf* B)
 //@requires B != NULL;
 //@requires !has_cycle(B->start);
 {
-	for (dll* i = B->start; i != B->end; i = i->next) {
+	for (dll* i = B->start; i != NULL; i = i->next) {
 		if (B->cursor == i) return false;
+		if (i == B->end) return true;
 	}
 
 	return true;
@@ -62,18 +63,37 @@ bool is_dll(dll* start, dll* end)
 //@requires !has_cycle(start);
 //@requires reachable(start, end);
 {
+	dll* prev = NULL;
+
+	for (dll* p = start; p != NULL; p = p->next) {
+		if (prev != NULL && prev != p->prev) {
+			return false;
+		}
+		prev = p;
+	}
+
 	return true;
 }
 
 bool is_tbuf(tbuf* B) {
 	if (B == NULL) return false;
-
 	if (has_cycle(B->start)) return false;
-
 	if (!reachable(B->start, B->end)) return false;
-
+	if (!is_dll(B->start, B->end)) return false;
 	if (cursor_outside(B)) return false;
-
 	return true;
 }
+
+bool tbuf_at_left(tbuf* B) 
+//@requires is_tbuf(B);
+{
+	return B->cursor == B->start->next;
+}
+
+bool tbuf_at_right(tbuf* B)
+//@requires is_tbuf(B);
+{
+	return B->cursor == B->end;
+}
+
 

@@ -95,21 +95,81 @@ void test_case_doubly() {
 	return;
 }
 
+void test_case_cursor_left() {
+    dll* head = alloc(dll);
+    dll* body = alloc(dll);
+    dll* tail = alloc(dll);
+    tbuf* tb = alloc(tbuf);
+
+    head->next = body;
+
+    body->prev = head;
+    body->next = tail;
+
+    tail->prev = body;
+
+    tb->start = head;
+    tb->end = tail;
+    tb->cursor = body;
+
+    //@assert tbuf_at_left(tb);
+
+    tb->cursor = tail;
+
+    //@assert !tbuf_at_left(tb);
+    return;
+}
+
+void test_case_cursor_right() {
+    dll* head = alloc(dll);
+    dll* body = alloc(dll);
+    dll* tail = alloc(dll);
+    tbuf* tb = alloc(tbuf);
+
+    head->next = body;
+
+    body->prev = head;
+    body->next = tail;
+
+    tail->prev = body;
+
+    tb->start = head;
+    tb->end = tail;
+    tb->cursor = body;
+
+    //@assert !tbuf_at_right(tb);
+
+    tb->cursor = tail;
+
+    //@assert tbuf_at_right(tb);
+    return;
+}
+
+
 int main() {
-	print("+-----------------------------------+--------+\n");
+	printf("+-------------------------------------------+--------+\n");
 
-	print("| Running test_case_circular()...   | ");
+	printf("| Running test_case_circular()..............| ");
 	test_case_circular();
-	print(" PASS  |\n");
+	printf(" PASS  |\n");
 
-	print("| Running test_case_outside()...    | ");
+	printf("| Running test_case_outside()...............| ");
 	test_case_outside();
-	print(" PASS  |\n");
+	printf(" PASS  |\n");
 
-	print("| Running test_case_doubly()...     | ");
+	printf("| Running test_case_doubly()................| ");
 	test_case_doubly();
-	print(" PASS  |\n");
-	print("+-----------------------------------+--------+\n");
-	print("All tests passed!\n");
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_cursor_left()...........| ");
+	test_case_cursor_left();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_cursor_right()..........| ");
+	test_case_cursor_right();
+	printf(" PASS  |\n");
+
+	printf("+-------------------------------------------+--------+\n");
+	printf("All tests passed!\n");
 	return 0;
 }
