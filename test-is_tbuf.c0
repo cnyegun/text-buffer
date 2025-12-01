@@ -145,6 +145,136 @@ void test_case_cursor_right() {
     return;
 }
 
+void test_case_tbuf_new() {
+	tbuf* tb = tbuf_new();
+	//@assert is_tbuf(tb);
+	return;
+}
+
+void test_case_forward() {
+	// to the right
+	// abc      abc
+	// 	*    ->   *
+	
+	// if already on the right most, don't do anything
+	tbuf* tb_1 = tbuf_new();
+	dll* prev_cursor = tb_1->cursor;
+	tbuf_forward(tb_1);
+	//@assert prev_cursor == tb_1->cursor;
+	
+	// if its from abitrarily position, move to the next
+	
+    dll* head = alloc(dll);
+    dll* body = alloc(dll);
+    dll* tail = alloc(dll);
+    tbuf* tb = alloc(tbuf);
+
+    head->next = body;
+
+    body->prev = head;
+    body->next = tail;
+
+    tail->prev = body;
+
+    tb->start = head;
+    tb->end = tail;
+
+    tb->cursor = body;
+	tbuf_forward(tb);
+	//@assert tb->cursor == tail;
+	return;
+}
+
+void test_case_backward() {
+	// to the left
+	// abc      abc
+	// 	*    -> *  
+	
+	// if already on the left most, don't do anything
+    dll* head_1 = alloc(dll);
+    dll* body_1 = alloc(dll);
+    dll* tail_1 = alloc(dll);
+    tbuf* tb_1 = alloc(tbuf);
+
+    head_1->next = body_1;
+
+    body_1->prev = head_1;
+    body_1->next = tail_1;
+
+    tail_1->prev = body_1;
+
+    tb_1->start = head_1;
+    tb_1->end = tail_1;
+    tb_1->cursor = body_1;
+
+	dll* prev_cur = tb_1->cursor;
+
+	tbuf_backward(tb_1);
+	//@assert prev_cur == tb_1->cursor;
+
+	// if its from abitrarily position, move to the next
+    dll* head = alloc(dll);
+	dll* body = alloc(dll);
+    dll* tail = alloc(dll);
+    tbuf* tb = alloc(tbuf);
+
+    head->next = body;
+
+    body->prev = head;
+    body->next = tail;
+
+    tail->prev = body;
+
+    tb->start = head;
+    tb->end = tail;
+
+    tb->cursor = tail;
+	tbuf_backward(tb);
+	//@assert tb->cursor == body;
+	return;
+}
+
+void test_case_delete() {
+	// if tbuf is the leftmost, don't do anything
+	tbuf* tb_1 = tbuf_new();
+	dll* prev_cur = tb_1->cursor;
+	//@assert tbuf_at_left(tb_1);
+	char c = tbuf_delete(tb_1);
+	//@assert c == '\0';
+	//@assert is_tbuf(tb_1);
+	//@assert prev_cur == tb_1->cursor;
+	
+	// if tbuf abitrarily position
+	// remove the element to the left of the cursor
+    dll* head = alloc(dll);
+	dll* body_1 = alloc(dll);
+	dll* body_2 = alloc(dll);
+    dll* tail = alloc(dll);
+    tbuf* tb = alloc(tbuf);
+
+    head->next = body_1;
+
+	body_1->data = 'a';
+    body_1->prev = head;
+    body_1->next = body_2;
+
+	body_2->data = 'b';
+	body_2->prev = body_1;
+	body_2->next = tail;
+
+    tail->prev = body_2;
+
+    tb->start = head;
+    tb->end = tail;
+	tb->cursor = body_2;
+	c = tbuf_delete(tb);
+	//@assert c == 'a';
+	//@assert is_tbuf(tb);
+	//@assert head->next == body_2;
+	//@assert body_2->prev == head;
+	//@assert tb->cursor == body_2;
+	return;
+}
 
 int main() {
 	printf("+-------------------------------------------+--------+\n");
@@ -167,6 +297,22 @@ int main() {
 
 	printf("| Running test_case_cursor_right()..........| ");
 	test_case_cursor_right();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_tbuf_new()..............| ");
+	test_case_tbuf_new();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_forward()...............| ");
+	test_case_forward();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_backward()..............| ");
+	test_case_backward();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_delete()................| ");
+	test_case_delete();
 	printf(" PASS  |\n");
 
 	printf("+-------------------------------------------+--------+\n");

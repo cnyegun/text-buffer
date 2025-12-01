@@ -96,4 +96,53 @@ bool tbuf_at_right(tbuf* B)
 	return B->cursor == B->end;
 }
 
+tbuf* tbuf_new() 
+//@ensures is_tbuf(\result);
+//@ensures tbuf_at_right(\result);
+{
+	dll* head = alloc(dll);
+	dll* tail = alloc(dll);
+	
+	head->next = tail;
+	tail->prev = head;
 
+	tbuf* B = alloc(tbuf);
+	B->start = head;
+	B->cursor = tail;
+	B->end = tail;
+	return B;
+}
+
+void tbuf_forward(tbuf* B)
+//@requires is_tbuf(B);
+{
+	if (tbuf_at_right(B)) {
+		return;
+	}
+
+	B->cursor = B->cursor->next;
+	return;
+}
+
+void tbuf_backward(tbuf* B)
+//@requires is_tbuf(B);
+{
+	if (tbuf_at_left(B)) {
+		return;
+	}
+	B->cursor = B->cursor->prev;
+	return;
+}
+
+char tbuf_delete(tbuf* B)
+//@requires is_tbuf(B);
+{
+	if (tbuf_at_left(B)) {
+		return '\0'; 
+	}
+
+	dll* target = B->cursor->prev;
+	B->cursor->prev = target->prev;
+	target->prev->next = B->cursor;
+	return target->data;
+}
