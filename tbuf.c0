@@ -142,7 +142,21 @@ char tbuf_delete(tbuf* B)
 	}
 
 	dll* target = B->cursor->prev;
+
 	B->cursor->prev = target->prev;
 	target->prev->next = B->cursor;
 	return target->data;
+}
+
+void tbuf_insert(tbuf* B, char c) 
+//@requires is_tbuf(B);
+{
+	dll* new_node = alloc(dll);
+
+	new_node->next = B->cursor;
+	new_node->prev = B->cursor->prev;
+	new_node->data = c;
+
+	B->cursor->prev->next = new_node;
+	B->cursor->prev = new_node;
 }

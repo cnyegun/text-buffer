@@ -273,7 +273,32 @@ void test_case_delete() {
 	//@assert head->next == body_2;
 	//@assert body_2->prev == head;
 	//@assert tb->cursor == body_2;
+
+	// Move the cursor after 'b'
+	tb->cursor = tail;
+
+	c = tbuf_delete(tb);
+	//@assert c == 'b';
+	//@assert is_tbuf(tb);
+	//@assert head->next == tail;
+	//@assert tail->prev == head;
+	//@assert tb->cursor == tail;
 	return;
+}
+
+void test_case_insert() {
+
+	// Head -> Tail 
+	//   	|
+	//	 	v
+	//  Head -> 'b' -> Tail
+
+	tbuf* tb_empty = tbuf_new();
+	tbuf_insert(tb_empty, 'b');
+	//@assert is_tbuf(tb_empty);
+	//@assert tb_empty->cursor == tb_empty->end;
+	//@assert tb_empty->cursor->prev->data == 'b';
+	//@assert tb_empty->start->next->data == 'b';
 }
 
 int main() {
@@ -313,6 +338,10 @@ int main() {
 
 	printf("| Running test_case_delete()................| ");
 	test_case_delete();
+	printf(" PASS  |\n");
+
+	printf("| Running test_case_insert()................| ");
+	test_case_insert();
 	printf(" PASS  |\n");
 
 	printf("+-------------------------------------------+--------+\n");
